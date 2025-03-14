@@ -19,20 +19,41 @@ steps:
   displayName: 'Run a multi-line script'
 
 #ToolInstaller
+#Pipeline内でPower Platform Build Toolsを実行するためにまずはこれをやる
 - task: PowerPlatformToolInstaller@2
   inputs:
     DefaultVersion: true
 
 #Whoami
+#Power Platform 開発環境への接続テスト
 - task: PowerPlatformWhoAmi@2
   inputs:
     authenticationType: 'PowerPlatformSPN'
     PowerPlatformSPN: 'PowerPlatform20250306'
 
-#Export
+#Power Platform内のすべてのカスタマイズを公開
 - task: PowerPlatformPublishCustomizations@2
   inputs:
     authenticationType: 'PowerPlatformSPN'
     PowerPlatformSPN: 'PowerPlatform20250306'
     AsyncOperation: true
     MaxAsyncWaitTime: '60'
+
+#Export
+#ソリューションをPower Platformの開発環境からExport
+- task: PowerPlatformExportSolution@2
+  inputs:
+    authenticationType: 'PowerPlatformSPN'
+    PowerPlatformSPN: 'PowerPlatform20250306'
+    SolutionName: 'METI'
+    SolutionOutputFile: 'METI'
+    AsyncOperation: true
+    MaxAsyncWaitTime: '60'
+
+#UnPack
+#ソリューションをXMLファイルに展開
+- task: PowerPlatformUnpackSolution@2
+  inputs:
+    SolutionInputFile: 'METI'
+    SolutionTargetFolder: 'METI'
+
